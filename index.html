@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DelhiZones - Discover Delhi's Heritage</title>
+    <meta name="description" content="Explore Delhi's heritage zones with expert guides. Book heritage walks, cultural experiences, and discover the rich history of India's capital.">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+            color: white;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-menu a:hover {
+            color: #FFD700;
+        }
+
+        .mobile-menu {
+            display: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(139, 69, 19, 0.8), rgba(210, 105, 30, 0.8)),
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%23f4e4c1" width="1200" height="600"/><g fill="%23d4af37" opacity="0.3"><circle cx="200" cy="150" r="50"/><circle cx="800" cy="250" r="70"/><circle cx="400" cy="400" r="40"/><circle cx="1000" cy="100" r="60"/></g></svg>');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            margin-top: 60px;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero-content p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #FFD700;
+            color: #8B4513;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Quick Booking Widget */
+        .booking-widget {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 3rem auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .booking-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            align-items: end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #8B4513;
+        }
+
+        .form-group select,
+        .form-group input {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: #D2691E;
+        }
+
+        /* Heritage Zones */
+        .heritage-zones {
+            padding: 5rem 2rem;
+            background: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #8B4513;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: #D2691E;
+        }
+
+        .zones-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .zone-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .zone-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .zone-image {
+            height: 200px;
+            background: linear-gradient(45deg, #D2691E, #8B4513);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+
+        .zone-content {
+            padding: 1.5rem;
+        }
+
+        .zone-content h3 {
+            font-size: 1.5rem;
+            color: #8B4513;
+            margin-bottom: 1rem;
+        }
+
+        .zone-highlights {
+            list-style: none;
+            margin-bottom: 1rem;
+        }
+
+        .zone-highlights li {
+            padding: 0.3rem 0;
+            color: #666;
+        }
+
+        .zone-highlights li::before {
+            content: '• ';
+            color: #D2691E;
+            font-weight: bold;
+        }
+
+        /* Services Section */
+        .services {
+            padding: 5rem 2rem;
+            background: white;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .service-card {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+            border: 2px solid #f0f0f0;
+            transition: all 0.3s ease;
+        }
+
+        .service-card:hover {
+            border-color: #D2691E;
+            transform: translateY(-5px);
+        }
+
+        .service-icon {
+            font-size: 3rem;
+            color: #D2691E;
+            margin-bottom: 1rem;
+        }
+
+        .service-card h3 {
+            color: #8B4513;
+            margin-bottom: 1rem;
+        }
+
+        /* Interactive Map */
+        .map-section {
+            padding: 5rem 2rem;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        .map-container {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .map-placeholder {
+            color: #666;
+            font-size: 1.2rem;
+        }
+
+        /* Testimonials */
+        .testimonials {
+            padding: 5rem 2rem;
+            background: #8B4513;
+            color: white;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .testimonial {
+            background: rgba(255,255,255,0.1);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .testimonial-stars {
+            color: #FFD700;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .testimonial-author {
+            font-weight: bold;
+            color: #FFD700;
+        }
+
+        /* Footer */
+        .footer {
+            background: #2c2c2c;
+            color: white;
+            padding: 3rem 2rem 1rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-section h3 {
+            color: #FFD700;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section a {
+            color: #ccc;
+            text-decoration: none;
+            display: block;
+            padding: 0.3rem 0;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: #FFD700;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            color: #ccc;
+            font-size: 1.5rem;
+            transition: color 0.3s;
+        }
+
+        .social-links a:hover {
+            color: #FFD700;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #555;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            text-align: center;
+            color: #ccc;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .mobile-menu {
+                display: block;
+            }
+            
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .booking-form {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="nav-container">
+            <a href="#" class="logo">DelhiZones</a>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#zones">Heritage Zones</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#guides">Local Guides</a></li>
+                    <li><a href="#experiences">Experiences</a></li>
+                    <li><a href="#content">Content Hub</a></li>
+                </ul>
+                <div class="mobile-menu">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>Discover Delhi's Hidden Heritage</h1>
+            <p>Experience the rich cultural tapestry of India's capital through expertly guided heritage walks, cultural experiences, and immersive zone-based exploration.</p>
+            <div class="cta-buttons">
+                <a href="#booking" class="btn btn-primary">Book Heritage Walk</a>
+                <a href="#zones" class="btn btn-secondary">Explore Zones</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Booking Widget -->
+    <div class="container">
+        <div id="booking" class="booking-widget">
+            <h2 style="text-align: center; color: #8B4513; margin-bottom: 2rem;">Quick Booking</h2>
+            <form class="booking-form" id="bookingForm">
+                <div class="form-group">
+                    <label for="zone">Select Zone</label>
+                    <select id="zone" required>
+                        <option value="">Choose Heritage Zone</option>
+                        <option value="old-delhi">Old Delhi Zone</option>
+                        <option value="central-delhi">Central Delhi Zone</option>
+                        <option value="south-delhi">South Delhi Zone</option>
+                        <option value="mehrauli">Mehrauli Zone</option>
+                        <option value="nizamuddin">Nizamuddin Zone</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="experience">Experience Type</label>
+                    <select id="experience" required>
+                        <option value="">Select Experience</option>
+                        <option value="heritage-walk">Heritage Walk</option>
+                        <option value="cultural-tour">Cultural Tour</option>
+                        <option value="photography-tour">Photography Tour</option>
+                        <option value="food-heritage">Food & Heritage</option>
+                        <option value="private-tour">Private Tour</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="date">Preferred Date</label>
+                    <input type="date" id="date" required>
+                </div>
+                <div class="form-group">
+                    <label for="guests">Number of Guests</label>
+                    <select id="guests" required>
+                        <option value="">Select</option>
+                        <option value="1">1 Person</option>
+                        <option value="2">2 People</option>
+                        <option value="3-5">3-5 People</option>
+                        <option value="6-10">6-10 People</option>
+                        <option value="10+">10+ People</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Check Availability</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Heritage Zones -->
+    <section id="zones" class="heritage-zones">
+        <div class="container">
+            <h2 class="section-title">Explore Delhi's Heritage Zones</h2>
+            <div class="zones-grid">
+                <div class="zone-card" onclick="openZoneModal('old-delhi')">
+                    <div class="zone-image">
+                        <i class="fas fa-mosque"></i>
+                    </div>
+                    <div class="zone-content">
+                        <h3>Old Delhi Zone</h3>
+                        <ul class="zone-highlights">
+                            <li>Red Fort (Lal Qila)</li>
+                            <li>Jama Masjid</li>
+                            <li>Chandni Chowk Market</li>
+                            <li>Mughal Architecture</li>
+                        </ul>
+                        <p style="color: #666; margin-top: 1rem;">Discover 400 years of Mughal history in the heart of old Delhi.</p>
+                    </div>
+                </div>
+
+                <div class="zone-card" onclick="openZoneModal('central-delhi')">
+                    <div class="zone-image">
+                        <i class="fas fa-landmark"></i>
+                    </div>
+                    <div class="zone-content">
+                        <h3>Central Delhi Zone</h3>
+                        <ul class="zone-highlights">
+                            <li>India Gate</li>
+                            <li>Rashtrapati Bhavan</li>
+                            <li>Connaught Place</li>
+                            <li>Colonial Architecture</li>
+                        </ul>
+                        <p style="color: #666; margin-top: 1rem;">Experience the grandeur of British colonial architecture and modern India.</p>
+                    </div>
+                </div>
+
+                <div class="zone-card" onclick="openZoneModal('south-delhi')">
+                    <div class="zone-image">
+                        <i class="fas fa-tree"></i>
+                    </div>
+                    <div class="zone-content">
+                        <h3>South Delhi Zone</h3>
+                        <ul class="zone-highlights">
+                            <li>Humayun's Tomb</li>
+                            <li>Lodhi Gardens</li>
+                            <li>Safdarjung's Tomb</li>
+                            <li>Garden Tombs</li>
+                        </ul>
+                        <p style="color: #666; margin-top: 1rem;">Explore UNESCO World Heritage sites and magnificent Mughal gardens.</p>
+                    </div>
+                </div>
+
+                <div class="zone-card" onclick="openZoneModal('mehrauli')">
+                    <div class="zone-image">
+                        <i class="fas fa-tower-observation"></i>
+                    </div>
+                    <div class="zone-content">
+                        <h3>Mehrauli Zone</h3>
+                        <ul class="zone-highlights">
+                            <li>Qutub Minar</li>
+                            <li>Iron Pillar</li>
+                            <li>Archaeological Park</li>
+                            <li>Delhi Sultanate Era</li>
+                        </ul>
+                        <p style="color: #666; margin-top: 1rem;">Journey through 1000 years of Delhi's history at this UNESCO site.</p>
+                    </div>
+                </div>
+
+                <div class="zone-card" onclick="openZoneModal('nizamuddin')">
+                    <div class="zone-image">
+                        <i class="fas fa-star-and-crescent"></i>
+                    </div>
+                    <div class="zone-content">
+                        <h3>Nizamuddin Zone</h3>
+                        <ul class="zone-highlights">
+                            <li>Nizamuddin Dargah</li>
+                            <li>Sufi Culture</li>
+                            <li>Amir Khusrau's Tomb</li>
+                            <li>Qawwali Nights</li>
+                        </ul>
+                        <p style="color: #666; margin-top: 1rem;">Experience Delhi's spiritual heart and rich Sufi traditions.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Map -->
+    <section class="map-section">
+        <div class="container">
+            <h2 class="section-title">Interactive Heritage Map</h2>
+            <div class="map-container">
+                <div class="map-placeholder">
+                    <i class="fas fa-map-marked-alt" style="font-size: 4rem; color: #D2691E; margin-bottom: 1rem;"></i>
+                    <p>Interactive Delhi Heritage Zones Map</p>
+                    <p style="font-size: 1rem; margin-top: 0.5rem;">Click on zones to explore detailed information and book experiences</p>
+                    <button class="btn btn-primary" style="margin-top: 1rem;" onclick="alert('Map integration with Google Maps API will be implemented')">Explore Interactive Map</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services -->
+    <section id="services" class="services">
+        <div class="container">
+            <h2 class="section-title">Our Services</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-walking"></i>
+                    </div>
+                    <h3>Heritage Walk Bookings</h3>
+                    <p>Professional guided walks through Delhi's historical zones with expert storytelling and cultural insights.</p>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-map-signs"></i>
+                    </div>
+                    <h3>Tourist Zone Packages</h3>
+                    <p>Comprehensive packages combining multiple heritage sites, local cuisine, and cultural experiences.</p>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-user-friends"></i>
+                    </div>
+                    <h3>Local Guide Network</h3>
+                    <p>Connect with verified local guides who bring Delhi's history to life with authentic stories and insights.</p>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3>Cultural Experience Marketplace</h3>
+                    <p>Unique cultural experiences including workshops, performances, and hands-on traditional activities.</p>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <h3>Private Tours & Customization</h3>
+                    <p>Personalized heritage experiences tailored to your interests, schedule, and preferences.</p>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-headphones"></i>
+                    </div>
+                    <h3>Audio Guides & Content</h3>
+                    <p>Self-guided audio tours, historical articles, and digital content for independent exploration.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials">
+        <div class="container">
+            <h2 class="section-title" style="color: white;">What Our Visitors Say</h2>
+            <div class="testimonials-grid">
+                <div class="testimonial">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">"Absolutely incredible experience! Our guide brought the Mughal era to life at Red Fort. The stories and historical details were fascinating."</p>
+                    <p class="testimonial-author">- Sarah Johnson, Tourist from UK</p>
+                </div>
+
+                <div class="testimonial">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">"Perfect blend of history and culture. The Old Delhi heritage walk was informative and the local guide was knowledgeable and friendly."</p>
+                    <p class="testimonial-author">- Rajesh Kumar, Local Delhi Resident</p>
+                </div>
+
+                <div class="testimonial">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">"DelhiZones made our family trip memorable. The Humayun's Tomb tour was educational and engaging for both adults and children."</p>
+                    <p class="testimonial-author">- Maria Garcia, Family Traveler</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>DelhiZones</h3>
+                <p>Your gateway to Delhi's rich heritage and cultural experiences. Discover the stories behind India's capital city.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3>Heritage Zones</h3>
+                <a href="#">Old Delhi Zone</a>
+                <a href="#">Central Delhi Zone</a>
+                <a href="#">South Delhi Zone</a>
+                <a href="#">Mehrauli Zone</a>
+                <a href="#">Nizamuddin Zone</a>
+            </div>
+
+            <div class="footer-section">
+                <h3>Services</h3>
+                <a href="#">Heritage Walks</a>
+                <a href="#">Cultural Experiences</a>
+                <a href="#">Private Tours</a>
+                <a href="#">Local Guides</a>
+                <a href="#">Audio Guides</a>
+            </div>
+
+            <div class="footer-section">
+                <h3>Contact Info</h3>
+                <p><i class="fas fa-phone"></i> +91 98765 43210</p>
+                <p><i class="fas fa-envelope"></i> info@delhizones.com</p>
+                <p><i class="fas fa-map-marker-alt"></i> New Delhi, India</p>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2024 DelhiZones.com - All Rights Reserved | Privacy Policy | Terms & Conditions</p>
+        </div>
+    </footer>
+
+    <!-- Zone Detail Modal -->
+    <div id="zoneModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="modalContent">
+                <!-- Dynamic content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set minimum date to today
+        document.getElementById('date').min = new Date().toISOString().split('T')[0];
+
+        // Booking form submission
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const zone = document.getElementById('zone').value;
+            const experience = document.getElementById('experience').value;
+            const date = document.getElementById('date').value;
+            const guests = document.getElementById('guests').value;
+
+            if (zone && experience && date && guests) {
+                alert(`Booking Request Submitted!\n\nZone: ${zone}\nExperience: ${experience}\nDate: ${date}\nGuests: ${guests}\n\nYou will receive a confirmation email shortly.`);
+            }
+        });
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Modal functionality
+        const modal = document.getElementById('zoneModal');
+        const modalContent = document.getElementById('modalContent');
+        const closeBtn = document.querySelector('.close');
+
+        function openZoneModal(zone) {
+            const zoneData = {
+                'old-delhi': {
+                    title: 'Old Delhi Zone - Mughal Heritage',
+                    description: 'Step back in time to the era of the great Mughal emperors. Old Delhi, founded by Shah Jahan in 1639, represents the pinnacle of Mughal architecture and urban planning.',
+                    highlights: [
+                        'Red Fort (Lal Qila) - UNESCO World Heritage Site',
+                        'Jama Masjid - India\'s largest mosque',
+                        'Chandni Chowk - Historic silver street market',
+                        'Spice Market - Aromatic spice trading hub',
+                        'Raj Ghat - Mahatma Gandhi Memorial'
+                    ],
+                    experiences: [
+                        'Morning Mughal Heritage Walk - ₹800 per person',
+                        'Street Food & Heritage Combo - ₹1,200 per person',
+                        'Photography Heritage Tour - ₹1,500 per person',
+                        'Rickshaw Heritage Ride - ₹600 per person'
+                    ]
+                },
+                'central-delhi': {
+                    title: 'Central Delhi Zone - Colonial Grandeur',
+                    description: 'Witness the architectural legacy of British colonial rule and independent India\'s seat of power. New Delhi, designed by Edwin Lutyens, showcases imperial grandeur.',
+                    highlights: [
+                        'India Gate - War Memorial and National Symbol',
+                        'Rashtrapati Bhavan - Presidential Palace',
+                        'Connaught Place - Georgian Architecture',
+                        'Parliament House - Democratic Heritage',
+                        'National Museum - Cultural Treasures'
+                    ],
+                    experiences: [
+                        'Colonial Delhi Walking Tour - ₹900 per person',
+                        'Architecture Appreciation Walk - ₹1,100 per person',
+                        'Government Quarter Heritage Tour - ₹750 per person',
+                        'Evening Light & Monument Tour - ₹950 per person'
+                    ]
+                },
+                'south-delhi': {
+                    title: 'South Delhi Zone - Garden Tomb Heritage',
+                    description: 'Explore the magnificent garden tombs that inspired the Taj Mahal. South Delhi houses some of the most beautiful examples of Indo-Islamic architecture.',
+                    highlights: [
+                        'Humayun\'s Tomb - UNESCO World Heritage Site',
+                        'Lodhi Gardens - 500 years of Delhi Sultanate',
+                        'Safdarjung\'s Tomb - Last Mughal Garden Tomb',
+                        'Purana Qila - Ancient Indraprastha',
+                        'National Zoological Park - Wildlife Heritage'
+                    ],
+                    experiences: [
+                        'Garden Heritage Walk - ₹700 per person',
+                        'Tomb Architecture Tour - ₹1,000 per person',
+                        'Bird Watching & Heritage Combo - ₹850 per person',
+                        'Sunset Heritage Photography - ₹1,200 per person'
+                    ]
+                },
+                'mehrauli': {
+                    title: 'Mehrauli Zone - Ancient Delhi Heritage',
+                    description: 'Discover 1000 years of continuous habitation at Delhi\'s oldest inhabited area. From the Delhi Sultanate to Mughal era, Mehrauli tells Delhi\'s complete story.',
+                    highlights: [
+                        'Qutub Minar - UNESCO World Heritage Site',
+                        'Iron Pillar - 1600-year-old metallurgical marvel',
+                        'Mehrauli Archaeological Park - Historical ruins',
+                        'Quwwat-ul-Islam Mosque - First mosque in Delhi',
+                        'Tomb of Iltutmish - Delhi Sultanate architecture'
+                    ],
+                    experiences: [
+                        'Qutub Complex Heritage Tour - ₹800 per person',
+                        'Archaeological Park Walk - ₹950 per person',
+                        'Delhi Sultanate History Tour - ₹1,100 per person',
+                        'Ancient Metallurgy & Architecture - ₹1,300 per person'
+                    ]
+                },
+                'nizamuddin': {
+                    title: 'Nizamuddin Zone - Sufi Spiritual Heritage',
+                    description: 'Experience the spiritual heart of Delhi at the shrine of Sufi saint Nizamuddin Auliya. This zone represents Delhi\'s syncretic culture and musical traditions.',
+                    highlights: [
+                        'Nizamuddin Dargah - 14th century Sufi shrine',
+                        'Amir Khusrau\'s Tomb - Poet and musician',
+                        'Chausath Khamba - 64-pillared monument',
+                        'Urs Festival - Annual spiritual gathering',
+                        'Qawwali Nights - Traditional music performances'
+                    ],
+                    experiences: [
+                        'Sufi Heritage & Music Tour - ₹900 per person',
+                        'Evening Qawwali Experience - ₹1,200 per person',
+                        'Spiritual Walking Tour - ₹750 per person',
+                        'Cultural Immersion Program - ₹1,500 per person'
+                    ]
+                }
+            };
+
+            const data = zoneData[zone];
+            if (data) {
+                modalContent.innerHTML = `
+                    <h2 style="color: #8B4513; margin-bottom: 1rem;">${data.title}</h2>
+                    <p style="margin-bottom: 2rem; font-size: 1.1rem; line-height: 1.6;">${data.description}</p>
+                    
+                    <h3 style="color: #D2691E; margin-bottom: 1rem;">Key Highlights</h3>
+                    <ul style="margin-bottom: 2rem;">
+                        ${data.highlights.map(highlight => `<li style="margin-bottom: 0.5rem;">${highlight}</li>`).join('')}
+                    </ul>
+                    
+                    <h3 style="color: #D2691E; margin-bottom: 1rem;">Available Experiences</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                        ${data.experiences.map(exp => `
+                            <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; border-left: 4px solid #D2691E;">
+                                ${exp}
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <button class="btn btn-primary" onclick="bookZoneExperience('${zone}')" style="margin-right: 1rem;">Book Experience</button>
+                        <button class="btn btn-secondary" onclick="downloadZoneGuide('${zone}')">Download Guide</button>
+                    </div>
+                `;
+                modal.style.display = 'block';
+            }
+        }
+
+        function bookZoneExperience(zone) {
+            document.getElementById('zone').value = zone;
+            modal.style.display = 'none';
+            document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function downloadZoneGuide(zone) {
+            alert(`Heritage guide for ${zone} zone will be downloaded. This feature will include detailed maps, historical information, and recommended routes.`);
+        }
+
+        closeBtn.onclick = function() {
+            modal.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Mobile menu toggle
+        document.querySelector('.mobile-menu').addEventListener('click', function() {
+            const navMenu = document.querySelector('.nav-menu');
+            navMenu.style.display = navMenu.style.display === 'flex' ? 'none' : 'flex';
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for animation
+        document.querySelectorAll('.zone-card, .service-card, .testimonial').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.6s ease-out';
+            observer.observe(el);
+        });
+
+        // Content Hub functionality
+        const contentHub = {
+            guides: [
+                {
+                    title: "Complete Guide to Red Fort: 360 Years of Mughal History",
+                    zone: "old-delhi",
+                    type: "Historical Guide",
+                    readTime: "15 min read",
+                    description: "Discover the architectural marvels and historical significance of Delhi's most iconic fortress."
+                },
+                {
+                    title: "Humayun's Tomb: Precursor to the Taj Mahal",
+                    zone: "south-delhi",
+                    type: "Architecture Guide",
+                    readTime: "12 min read",
+                    description: "Explore the garden tomb that inspired the world's most famous monument."
+                },
+                {
+                    title: "Qutub Minar: 1000 Years of Delhi's History",
+                    zone: "mehrauli",
+                    type: "Historical Guide",
+                    readTime: "18 min read",
+                    description: "Journey through millennia of Delhi's evolution at this UNESCO World Heritage site."
+                }
+            ],
+            routes: [
+                {
+                    title: "Old Delhi Heritage Circuit",
+                    distance: "3.5 km",
+                    duration: "4 hours",
+                    difficulty: "Easy"
+                },
+                {
+                    title: "Lutyens Delhi Walk",
+                    distance: "5 km",
+                    duration: "3 hours",
+                    difficulty: "Moderate"
+                }
+            ]
+        };
+
+        // Add content hub section after services
+        function loadContentHub() {
+            const contentSection = document.createElement('section');
+            contentSection.id = 'content';
+            contentSection.className = 'services';
+            contentSection.style.background = '#f8f9fa';
+            
+            contentSection.innerHTML = `
+                <div class="container">
+                    <h2 class="section-title">Content Hub</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem;">
+                        <div>
+                            <h3 style="color: #8B4513; margin-bottom: 1rem;">Historical Zone Guides</h3>
+                            ${contentHub.guides.map(guide => `
+                                <div style="background: white; padding: 1.5rem; border-radius: 10px; margin-bottom: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                                    <h4 style="color: #D2691E; margin-bottom: 0.5rem;">${guide.title}</h4>
+                                    <p style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">${guide.type} • ${guide.readTime}</p>
+                                    <p style="margin-bottom: 1rem;">${guide.description}</p>
+                                    <button class="btn btn-primary" style="font-size: 0.9rem; padding: 8px 20px;">Read Guide</button>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <div>
+                            <h3 style="color: #8B4513; margin-bottom: 1rem;">Walking Route Maps</h3>
+                            ${contentHub.routes.map(route => `
+                                <div style="background: white; padding: 1.5rem; border-radius: 10px; margin-bottom: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                                    <h4 style="color: #D2691E; margin-bottom: 0.5rem;">${route.title}</h4>
+                                    <div style="display: flex; gap: 1rem; margin-bottom: 1rem; font-size: 0.9rem; color: #666;">
+                                        <span><i class="fas fa-route"></i> ${route.distance}</span>
+                                        <span><i class="fas fa-clock"></i> ${route.duration}</span>
+                                        <span><i class="fas fa-signal"></i> ${route.difficulty}</span>
+                                    </div>
+                                    <button class="btn btn-secondary" style="font-size: 0.9rem; padding: 8px 20px;">Download Map</button>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <div>
+                            <h3 style="color: #8B4513; margin-bottom: 1rem;">Audio Guides & Media</h3>
+                            <div style="background: white; padding: 1.5rem; border-radius: 10px; margin-bottom: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                                <h4 style="color: #D2691E; margin-bottom: 0.5rem;">Audio Guide Collection</h4>
+                                <p style="margin-bottom: 1rem;">Professional narrated tours for self-guided exploration of Delhi's heritage zones.</p>
+                                <button class="btn btn-primary" style="font-size: 0.9rem; padding: 8px 20px;">Browse Audio Guides</button>
+                            </div>
+                            
+                            <div style="background: white; padding: 1.5rem; border-radius: 10px; margin-bottom: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                                <h4 style="color: #D2691E; margin-bottom: 0.5rem;">Heritage Photo Gallery</h4>
+                                <p style="margin-bottom: 1rem;">Curated collection of historical and contemporary photographs from Delhi's heritage sites.</p>
+                                <button class="btn btn-secondary" style="font-size: 0.9rem; padding: 8px 20px;">View Gallery</button>
+                            </div>
+                            
+                            <div style="background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                                <h4 style="color: #D2691E; margin-bottom: 0.5rem;">Heritage Stories Blog</h4>
+                                <p style="margin-bottom: 1rem;">Weekly stories, legends, and historical insights from Delhi's rich cultural tapestry.</p>
+                                <button class="btn btn-primary" style="font-size: 0.9rem; padding: 8px 20px;">Read Stories</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.querySelector('.services').insertAdjacentElement('afterend', contentSection);
+        }
+
+        // Load content hub when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadContentHub();
+        });
+    </script>
+</body>
+</html>
