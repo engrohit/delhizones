@@ -22,96 +22,143 @@
 </head>
 <body>
     <div class="container">
-        <h1>DelhiZones Posts Search</h1>
-        <input type="text" id="searchBar" class="search-bar" placeholder="Type to search posts by title or content...">
+        <h1>DelhiZones Data Search</h1>
+        <select id="dataType" style="margin-bottom:16px;padding:8px 16px;border-radius:8px;font-size:1em;">
+            <option value="posts">Posts</option>
+            <option value="sdb">SDB Data</option>
+        </select>
+        <input type="text" id="searchBar" class="search-bar" placeholder="Type to search...">
         <ul id="postList" class="post-list" style="display:none;"></ul>
     </div>
     <script>
-        // Load posts from local database (posts.json)
+        // Load both posts and sdb data
         let posts = [];
+        let sdb = [];
         let currentFiltered = [];
+        let currentType = 'posts';
 
-        // Fetch posts.json and initialize search
+        // Fetch both datasets
         fetch('database/posts.json')
             .then(response => response.json())
             .then(data => {
                 posts = data;
-                renderPosts();
+            });
+        fetch('sdb.json')
+            .then(response => response.json())
+            .then(data => {
+                sdb = data;
             });
 
-        function renderPosts(filter = "") {
+        function renderData(filter = "") {
             const postList = document.getElementById("postList");
             postList.innerHTML = "";
+            let dataArr = currentType === 'posts' ? posts : sdb;
             if (!filter) {
                 postList.style.display = "none";
                 currentFiltered = [];
                 return;
             }
-            // Strip HTML tags for search
-            const stripHtml = str => str.replace(/<[^>]+>/g, '');
-            currentFiltered = posts.filter(post => {
-                const contentText = Array.isArray(post.content)
-                    ? post.content.map(stripHtml).join(' ').toLowerCase()
-                    : stripHtml(post.content).toLowerCase();
-                return post.title.toLowerCase().includes(filter) || contentText.includes(filter);
-            }).slice(0, 5); // Show only first 5 matches
-            postList.style.display = "block";
-            if (currentFiltered.length === 0) {
-                postList.innerHTML = '<li style="text-align:center;color:#888;">No posts found.</li>';
-                return;
+            filter = filter.toLowerCase();
+            if (currentType === 'posts') {
+                // Strip HTML tags for search
+                const stripHtml = str => str.replace(/<[^>]+>/g, '');
+                currentFiltered = dataArr.filter(post => {
+                    const contentText = Array.isArray(post.content)
+                        ? post.content.map(stripHtml).join(' ').toLowerCase()
+                        : stripHtml(post.content).toLowerCase();
+                    return post.title.toLowerCase().includes(filter) || contentText.includes(filter);
+                }).slice(0, 5);
+                postList.style.display = "block";
+                if (currentFiltered.length === 0) {
+                    postList.innerHTML = '<li style="text-align:center;color:#888;">No posts found.</li>';
+                    return;
+                }
+                currentFiltered.forEach((post, idx) => {
+                    postList.innerHTML += `<li class="post-item">
+                        <div class="post-title"><a class="post-link" href="#" data-idx="${idx}">${post.title}</a></div>
+                        <div class="post-date">${post.date}</div>
+                    </li>`;
+                });
+            } else {
+                // SDB Data: search all fields
+                currentFiltered = dataArr.filter(entry => {
+                    return Object.values(entry).some(val => (val || "").toLowerCase().includes(filter));
+                }).slice(0, 5);
+                postList.style.display = "block";
+                if (currentFiltered.length === 0) {
+                    postList.innerHTML = '<li style="text-align:center;color:#888;">No SDB data found.</li>';
+                    return;
+                }
+                currentFiltered.forEach((entry, idx) => {
+                    postList.innerHTML += `<li class="post-item">
+                        <div class="post-title"><a class="post-link" href="#" data-idx="${idx}">${entry["Site Name Master DPR"] || entry["New IP ID"]}</a></div>
+                        <div class="post-date">${entry["ON Aired Date"] || ""}</div>
+                    </li>`;
+                });
             }
-            currentFiltered.forEach((post, idx) => {
-                postList.innerHTML += `<li class="post-item">
-                    <div class="post-title"><a class="post-link" href="#" data-idx="${idx}">${post.title}</a></div>
-                    <div class="post-date">${post.date}</div>
-                </li>`;
-            });
         }
 
-        function showPost(idx) {
-            const post = currentFiltered[idx];
+        function showDetails(idx) {
             const postList = document.getElementById("postList");
+            let item = currentFiltered[idx];
             postList.style.display = "block";
-            const author = post.author || "rpkc8800";
-            const date = post.date ? new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : "";
-            // Render content lines as HTML blocks
-            let contentHtml = "";
-            if (Array.isArray(post.content)) {
-                contentHtml = post.content.map(line => {
-                    // Detect Lat,Long line and make 'map' clickable
-                    const latLongMatch = line.match(/Lat,Long\s*-\s*([0-9.]+),([0-9.]+)\s*map/i);
-                    if (latLongMatch) {
-                        const lat = latLongMatch[1];
-                        const long = latLongMatch[2];
-                        return line.replace(/map/i, `<a href='https://maps.google.com/maps?q=${lat},${long}' target='_blank' style='color:#0073aa;text-decoration:underline;'>map</a>`);
-                    }
-                    return line;
-                }).join('');
+            if (currentType === 'posts') {
+                const author = item.author || "rpkc8800";
+                const date = item.date ? new Date(item.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : "";
+                let contentHtml = "";
+                if (Array.isArray(item.content)) {
+                    contentHtml = item.content.map(line => {
+                        const latLongMatch = line.match(/Lat,Long\s*-\s*([0-9.]+),([0-9.]+)\s*map/i);
+                        if (latLongMatch) {
+                            const lat = latLongMatch[1];
+                            const long = latLongMatch[2];
+                            return line.replace(/map/i, `<a href='https://maps.google.com/maps?q=${lat},${long}' target='_blank' style='color:#0073aa;text-decoration:underline;'>map</a>`);
+                        }
+                        return line;
+                    }).join('');
+                } else {
+                    contentHtml = `<div>${item.content}</div>`;
+                }
+                postList.innerHTML = `<li class="post-item" style="background:#fff;max-width:700px;margin:0 auto;">
+                    <div class="post-title" style="font-size:2em;font-weight:600;color:#223;">${item.title}</div>
+                    <div style="color:#3b5998;font-size:1em;margin-bottom:16px;">By ${author} / ${date}</div>
+                    <div class="post-content" style="font-size:1.1em;color:#222;">${contentHtml}</div>
+                    <button onclick="renderData(document.getElementById('searchBar').value)" style="margin-top:24px;padding:8px 24px;border-radius:6px;border:none;background:#0073aa;color:#fff;cursor:pointer;">Back to list</button>
+                </li>`;
             } else {
-                // fallback for string content
-                contentHtml = `<div>${post.content}</div>`;
+                // SDB details: show all fields
+                let detailsHtml = '<div style="font-size:1.1em;color:#222;">';
+                Object.entries(item).forEach(([key, val]) => {
+                    detailsHtml += `<div><strong>${key}:</strong> ${val}</div>`;
+                });
+                detailsHtml += '</div>';
+                postList.innerHTML = `<li class="post-item" style="background:#fff;max-width:700px;margin:0 auto;">
+                    <div class="post-title" style="font-size:2em;font-weight:600;color:#223;">${item["Site Name Master DPR"] || item["New IP ID"]}</div>
+                    <div style="color:#3b5998;font-size:1em;margin-bottom:16px;">${item["ON Aired Date"] || ""}</div>
+                    ${detailsHtml}
+                    <button onclick="renderData(document.getElementById('searchBar').value)" style="margin-top:24px;padding:8px 24px;border-radius:6px;border:none;background:#0073aa;color:#fff;cursor:pointer;">Back to list</button>
+                </li>`;
             }
-            postList.innerHTML = `<li class="post-item" style="background:#fff;max-width:700px;margin:0 auto;">
-                <div class="post-title" style="font-size:2em;font-weight:600;color:#223;">${post.title}</div>
-                <div style="color:#3b5998;font-size:1em;margin-bottom:16px;">By ${author} / ${date}</div>
-                <div class="post-content" style="font-size:1.1em;color:#222;">${contentHtml}</div>
-                <button onclick="renderPosts(document.getElementById('searchBar').value.toLowerCase())" style="margin-top:24px;padding:8px 24px;border-radius:6px;border:none;background:#0073aa;color:#fff;cursor:pointer;">Back to list</button>
-            </li>`;
         }
 
         document.getElementById("searchBar").addEventListener("input", function(e) {
-            renderPosts(e.target.value.toLowerCase());
+            renderData(e.target.value);
+        });
+
+        document.getElementById("dataType").addEventListener("change", function(e) {
+            currentType = e.target.value;
+            renderData(document.getElementById('searchBar').value);
         });
 
         document.getElementById("postList").addEventListener("click", function(e) {
             if (e.target.classList.contains("post-link")) {
                 e.preventDefault();
                 const idx = e.target.getAttribute("data-idx");
-                showPost(idx);
+                showDetails(idx);
             }
         });
 
-        renderPosts();
+        renderData();
     </script>
 </body>
 </html>
