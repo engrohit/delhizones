@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DelhiZones Posts Search</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f6f8fa; margin: 0; }
+        .container { max-width: 900px; margin: 40px auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px #0001; padding: 32px; }
+        h1 { text-align: center; color: #3b5998; margin-bottom: 24px; }
+        .search-bar { width: 100%; padding: 12px; font-size: 1.1em; border-radius: 8px; border: 1px solid #ccc; margin-bottom: 24px; }
+        .post-list { list-style: none; padding: 0; }
+        .post-item { background: #f9f9f9; margin-bottom: 18px; border-radius: 8px; padding: 18px; box-shadow: 0 1px 4px #0001; transition: box-shadow 0.2s; }
+        .post-item:hover { box-shadow: 0 4px 16px #0002; }
+        .post-title { font-size: 1.2em; color: #0073aa; margin-bottom: 8px; }
+        .post-link { color: #0073aa; text-decoration: none; }
+        .post-link:hover { text-decoration: underline; }
+        .post-content { color: #333; margin-bottom: 8px; }
+        .post-date { color: #888; font-size: 0.95em; }
+        @media (max-width: 600px) { .container { padding: 12px; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>DelhiZones Data Search</h1>
+        <select id="dataType" style="margin-bottom:16px;padding:8px 16px;border-radius:8px;font-size:1em;">
+            <option value="posts">Posts</option>
+            <option value="sdb">SDB Data</option>
+        </select>
+        <input type="text" id="searchBar" class="search-bar" placeholder="Type to search...">
+        <ul id="postList" class="post-list" style="display:none;"></ul>
+    </div>
+    <script>
+        // Load both posts and sdb data
+        let posts = [];
+        let sdb = [];
+        let currentFiltered = [];
+        let currentType = 'posts';
+
+        // Fetch both datasets
+        fetch('database/posts.json')
+            .then(response => response.json())
+            .then(data => {
+                posts = data;
+            });
+        fetch('sdb.json')
+            .then(response => response.json())
+            .then(data => {
+                sdb = data;
+            });
+
+        function renderData(filter = "") {
+            const postList = document.getElementById("postList");
+            postList.innerHTML = "";
+            let dataArr = currentType === 'posts' ? posts : sdb;
+            if (!filter) {
+                postList.style.display = "none";
+                currentFiltered = [];
+                return;
+            }
+            filter = filter.toLowerCase();
+            if (currentType === 'posts') {
+                // Strip HTML tags for search
+                const stripHtml = str => str.replace(/<[^>]+>/g, '');
+                currentFiltered = dataArr.filter(post => {
+                    const contentText = Array.isArray(post.content)
+                        ? post.content.map(stripHtml).join(' ').toLowerCase()
+                        : stripHtml(post.content).toLowerCase();
+                    return post.title.toLowerCase().includes(filter) || contentText.includes(filter);
+                }).slice(0, 5);
+                postList.style.display = "block";
+                if (currentFiltered.length === 0) {
+                    postList.innerHTML = '<li style="text-align:center;color:#888;">No posts found.</li>';
+                    return;
+                }
+                currentFiltered.forEach((post, idx) => {
+                    postList.innerHTML += `<li class="post-item">
+                        <div class="post-title"><a class="post-link" href="#" data-idx="${idx}">${post.title}</a></div>
+                        <div class="post-date">${post.date}</div>
+                    </li>`;
+                });
+            } else {
+                // SDB Data: search all fields
+                currentFiltered = dataArr.filter(entry => {
+                    return Object.values(entry).some(val => (val || "").toLowerCase().includes(filter));
+                }).slice(0, 5);
+                postList.style.display = "block";
+                if (currentFiltered.length === 0) {
+                    postList.innerHTML = '<li style="text-align:center;color:#888;">No SDB data found.</li>';
+                    return;
+                }
+                currentFiltered.forEach((entry, idx) => {
+                    postList.innerHTML += `<li class="post-item">
+                        <div class="post-title"><a class="post-link" href="#" data-idx="${idx}">${entry["Site Name Master DPR"] || entry["New IP ID"]}</a></div>
+                        <div class="post-date">${entry["ON Aired Date"] || ""}</div>
+                    </li>`;
+                });
+            }
+        }
+
+        function showDetails(idx) {
+            const postList = document.getElementById("postList");
+            let item = currentFiltered[idx];
+            postList.style.display = "block";
+            if (currentType === 'posts') {
+                const author = item.author || "rpkc8800";
+                const date = item.date ? new Date(item.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : "";
+                let contentHtml = "";
+                if (Array.isArray(item.content)) {
+                    contentHtml = item.content.map(line => {
+                        const latLongMatch = line.match(/Lat,Long\s*-\s*([0-9.]+),([0-9.]+)\s*map/i);
+                        if (latLongMatch) {
+                            const lat = latLongMatch[1];
+                            const long = latLongMatch[2];
+                            return line.replace(/map/i, `<a href='https://maps.google.com/maps?q=${lat},${long}' target='_blank' style='color:#0073aa;text-decoration:underline;'>map</a>`);
+                        }
+                        return line;
+                    }).join('');
+                } else {
+                    contentHtml = `<div>${item.content}</div>`;
+                }
+                postList.innerHTML = `<li class="post-item" style="background:#fff;max-width:700px;margin:0 auto;">
+                    <div class="post-title" style="font-size:2em;font-weight:600;color:#223;">${item.title}</div>
+                    <div style="color:#3b5998;font-size:1em;margin-bottom:16px;">By ${author} / ${date}</div>
+                    <div class="post-content" style="font-size:1.1em;color:#222;">${contentHtml}</div>
+                    <button onclick="renderData(document.getElementById('searchBar').value)" style="margin-top:24px;padding:8px 24px;border-radius:6px;border:none;background:#0073aa;color:#fff;cursor:pointer;">Back to list</button>
+                </li>`;
+            } else {
+                // SDB details: show all fields
+                let detailsHtml = '<div style="font-size:1.1em;color:#222;">';
+                Object.entries(item).forEach(([key, val]) => {
+                    detailsHtml += `<div><strong>${key}:</strong> ${val}</div>`;
+                });
+                detailsHtml += '</div>';
+                postList.innerHTML = `<li class="post-item" style="background:#fff;max-width:700px;margin:0 auto;">
+                    <div class="post-title" style="font-size:2em;font-weight:600;color:#223;">${item["Site Name Master DPR"] || item["New IP ID"]}</div>
+                    <div style="color:#3b5998;font-size:1em;margin-bottom:16px;">${item["ON Aired Date"] || ""}</div>
+                    ${detailsHtml}
+                    <button onclick="renderData(document.getElementById('searchBar').value)" style="margin-top:24px;padding:8px 24px;border-radius:6px;border:none;background:#0073aa;color:#fff;cursor:pointer;">Back to list</button>
+                </li>`;
+            }
+        }
+
+        document.getElementById("searchBar").addEventListener("input", function(e) {
+            renderData(e.target.value);
+        });
+
+        document.getElementById("dataType").addEventListener("change", function(e) {
+            currentType = e.target.value;
+            renderData(document.getElementById('searchBar').value);
+        });
+
+        document.getElementById("postList").addEventListener("click", function(e) {
+            if (e.target.classList.contains("post-link")) {
+                e.preventDefault();
+                const idx = e.target.getAttribute("data-idx");
+                showDetails(idx);
+            }
+        });
+
+        renderData();
+    </script>
+</body>
+</html>
