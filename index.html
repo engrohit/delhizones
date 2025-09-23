@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DelhiZones Posts Search</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f6f8fa; margin: 0; }
+        .container { max-width: 900px; margin: 40px auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px #0001; padding: 32px; }
+        h1 { text-align: center; color: #3b5998; margin-bottom: 24px; }
+        .search-bar { width: 100%; padding: 12px; font-size: 1.1em; border-radius: 8px; border: 1px solid #ccc; margin-bottom: 24px; }
+        .post-list { list-style: none; padding: 0; }
+        .post-item { background: #f9f9f9; margin-bottom: 18px; border-radius: 8px; padding: 18px; box-shadow: 0 1px 4px #0001; transition: box-shadow 0.2s; }
+        .post-item:hover { box-shadow: 0 4px 16px #0002; }
+        .post-title { font-size: 1.2em; color: #0073aa; margin-bottom: 8px; }
+        .post-link { color: #0073aa; text-decoration: none; }
+        .post-link:hover { text-decoration: underline; }
+        .post-content { color: #333; margin-bottom: 8px; }
+        .post-date { color: #888; font-size: 0.95em; }
+        @media (max-width: 600px) { .container { padding: 12px; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>DelhiZones Posts Search</h1>
+        <input type="text" id="searchBar" class="search-bar" placeholder="Type to search posts by title or content...">
+        <ul id="postList" class="post-list" style="display:none;"></ul>
+    </div>
+    <script>
+        // Load posts from local database (posts.json)
+        let posts = [];
+        let currentFiltered = [];
+
+        // Fetch posts.json and initialize search
+        fetch('database/posts.json')
+            .then(response => response.json())
+            .then(data => {
+                posts = data;
+                renderPosts();
+            });
+
+        function renderPosts(filter = "") {
+            const postList = document.getElementById("postList");
+            postList.innerHTML = "";
+            if (!filter) {
+                postList.style.display = "none";
+                currentFiltered = [];
+                return;
+            }
+            // Strip HTML tags for search
+            const stripHtml = str => str.replace(/<[^>]+>/g, '');
+            currentFiltered = posts.filter(post => {
+                const contentText = Array.isArray(post.content)
+                    ? post.content.map(stripHtml).join(' ').toLowerCase()
+                    : stripHtml(post.content).toLowerCase();
+                return post.title.toLowerCase().includes(filter) || contentText.includes(filter);
+            }).slice(0, 5); // Show only first 5 matches
+            postList.style.display = "block";
+            if (currentFiltered.length === 0) {
+                postList.innerHTML = '<li style="text-align:center;color:#888;">No posts found.</li>';
+                return;
+            }
+            currentFiltered.forEach((post, idx) => {
+                postList.innerHTML += `<li class="post-item">
+                    <div class="post-title"><a class="post-link" href="#" data-idx="${idx}">${post.title}</a></div>
+                    <div class="post-date">${post.date}</div>
+                </li>`;
+            });
+        }
+
+        function showPost(idx) {
+            const post = currentFiltered[idx];
+            const postList = document.getElementById("postList");
+            postList.style.display = "block";
+            const author = post.author || "rpkc8800";
+            const date = post.date ? new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : "";
+            // Render content lines as HTML blocks
+            let contentHtml = "";
+            if (Array.isArray(post.content)) {
+                contentHtml = post.content.map(line => {
+                    // Detect Lat,Long line and make 'map' clickable
+                    const latLongMatch = line.match(/Lat,Long\s*-\s*([0-9.]+),([0-9.]+)\s*map/i);
+                    if (latLongMatch) {
+                        const lat = latLongMatch[1];
+                        const long = latLongMatch[2];
+                        return line.replace(/map/i, `<a href='https://maps.google.com/maps?q=${lat},${long}' target='_blank' style='color:#0073aa;text-decoration:underline;'>map</a>`);
+                    }
+                    return line;
+                }).join('');
+            } else {
+                // fallback for string content
+                contentHtml = `<div>${post.content}</div>`;
+            }
+            postList.innerHTML = `<li class="post-item" style="background:#fff;max-width:700px;margin:0 auto;">
+                <div class="post-title" style="font-size:2em;font-weight:600;color:#223;">${post.title}</div>
+                <div style="color:#3b5998;font-size:1em;margin-bottom:16px;">By ${author} / ${date}</div>
+                <div class="post-content" style="font-size:1.1em;color:#222;">${contentHtml}</div>
+                <button onclick="renderPosts(document.getElementById('searchBar').value.toLowerCase())" style="margin-top:24px;padding:8px 24px;border-radius:6px;border:none;background:#0073aa;color:#fff;cursor:pointer;">Back to list</button>
+            </li>`;
+        }
+
+        document.getElementById("searchBar").addEventListener("input", function(e) {
+            renderPosts(e.target.value.toLowerCase());
+        });
+
+        document.getElementById("postList").addEventListener("click", function(e) {
+            if (e.target.classList.contains("post-link")) {
+                e.preventDefault();
+                const idx = e.target.getAttribute("data-idx");
+                showPost(idx);
+            }
+        });
+
+        renderPosts();
+    </script>
+</body>
+</html>
