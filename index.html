@@ -3,162 +3,285 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DelhiZones Posts Search</title>
+    <title>DelhiZones - Search and Explore</title>
+    <!-- Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: Arial, sans-serif; background: #f6f8fa; margin: 0; }
-        .container { max-width: 900px; margin: 40px auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px #0001; padding: 32px; }
-        h1 { text-align: center; color: #3b5998; margin-bottom: 24px; }
-        .search-bar { width: 100%; padding: 12px; font-size: 1.1em; border-radius: 8px; border: 1px solid #ccc; margin-bottom: 24px; }
-        .post-list { list-style: none; padding: 0; }
-        .post-item { background: #f9f9f9; margin-bottom: 18px; border-radius: 8px; padding: 18px; box-shadow: 0 1px 4px #0001; transition: box-shadow 0.2s; }
-        .post-item:hover { box-shadow: 0 4px 16px #0002; }
-        .post-title { font-size: 1.2em; color: #0073aa; margin-bottom: 8px; }
-        .post-link { color: #0073aa; text-decoration: none; }
-        .post-link:hover { text-decoration: underline; }
-        .post-content { color: #333; margin-bottom: 8px; }
-        .post-date { color: #888; font-size: 0.95em; }
-        @media (max-width: 600px) { .container { padding: 12px; } }
+        /* Custom styles to complement Tailwind */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* A light gray background */
+        }
+        /* Custom focus ring for better accessibility and branding */
+        .custom-focus-ring:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4);
+        }
+        /* Smooth transition for UI elements */
+        .transition-all {
+            transition: all 0.3s ease-in-out;
+        }
     </style>
 </head>
-<body>
-    <div class="container">
-        <h1>DelhiZones Data Search</h1>
-        <select id="dataType" style="margin-bottom:16px;padding:8px 16px;border-radius:8px;font-size:1em;">
-            <option value="posts">Posts</option>
-            <option value="sdb">SDB Data</option>
-        </select>
-        <input type="text" id="searchBar" class="search-bar" placeholder="Type to search...">
-        <ul id="postList" class="post-list" style="display:none;"></ul>
-    </div>
-    <script>
-        // Load both posts and sdb data
-        let posts = [];
-        let sdb = [];
-        let currentFiltered = [];
-        let currentType = 'posts';
+<body class="text-gray-800">
 
-        // Fetch both datasets
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <a href="#" class="font-bold text-xl text-blue-600 flex items-center">
+                        <i class="fas fa-search-location mr-2"></i>
+                        <span>DelhiZones</span>
+                    </a>
+                </div>
+                <!-- Desktop Menu -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#" class="text-gray-600 hover:bg-blue-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                        <a href="#" class="text-gray-600 hover:bg-blue-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium">About</a>
+                        <a href="#" class="text-gray-600 hover:bg-blue-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Contact</a>
+                        <a href="#" class="text-gray-600 hover:bg-blue-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Privacy</a>
+                    </div>
+                </div>
+                <!-- Mobile Menu Button -->
+                <div class="-mr-2 flex md:hidden">
+                    <button id="mobile-menu-button" type="button" class="bg-gray-100 inline-flex items-center justify-center p-2 rounded-md text-gray-500 hover:text-white hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-white">
+                        <span class="sr-only">Open main menu</span>
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu, shown/hidden based on button state -->
+        <div class="md:hidden hidden" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#" class="text-gray-600 hover:bg-blue-500 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Home</a>
+                <a href="#" class="text-gray-600 hover:bg-blue-500 hover:text-white block px-3 py-2 rounded-md text-base font-medium">About</a>
+                <a href="#" class="text-gray-600 hover:bg-blue-500 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Contact</a>
+                <a href="#" class="text-gray-600 hover:bg-blue-500 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Privacy</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <div class="container mx-auto max-w-4xl py-12 px-4">
+        <div class="text-center mb-10">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
+                Explore <span class="text-blue-600">DelhiZones</span> Data
+            </h1>
+            <p class="mt-4 text-lg text-gray-600">
+                Your trusted source for site data, posts, and more. Use the search below to explore our database.
+            </p>
+        </div>
+
+        <!-- Search Interface -->
+        <div class="bg-white p-6 rounded-xl shadow-lg mb-8">
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="relative flex-grow">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="searchBar" class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg text-lg custom-focus-ring transition-all" placeholder="Search for anything...">
+                </div>
+                <select id="dataType" class="border border-gray-300 rounded-lg py-3 px-4 text-lg custom-focus-ring transition-all">
+                    <option value="posts">Posts</option>
+                    <option value="sdb">SDB Data</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Results List -->
+        <div id="resultsContainer" class="space-y-4">
+            <!-- Search results will be dynamically inserted here -->
+        </div>
+         <div id="noResults" class="text-center py-10 hidden">
+            <i class="fas fa-box-open text-4xl text-gray-400 mb-4"></i>
+            <p class="text-gray-500 text-lg">No results found. Try a different search term.</p>
+        </div>
+    </div>
+
+    <script>
+        // --- Load Data from JSON files ---
+        let postsData = [];
+        let sdbData = [];
+        let postsLoaded = false;
+        let sdbLoaded = false;
+        // Fetch posts.json
         fetch('database/posts.json')
             .then(response => response.json())
             .then(data => {
-                posts = data;
+                postsData = data;
+                postsLoaded = true;
+                tryRenderResults();
             });
+        // Fetch sdb.json
         fetch('sdb.json')
             .then(response => response.json())
             .then(data => {
-                sdb = data;
+                sdbData = data;
+                sdbLoaded = true;
+                tryRenderResults();
             });
 
-        function renderData(filter = "") {
-            const postList = document.getElementById("postList");
-            postList.innerHTML = "";
-            let dataArr = currentType === 'posts' ? posts : sdb;
-            if (!filter) {
-                postList.style.display = "none";
-                currentFiltered = [];
-                return;
-            }
-            filter = filter.toLowerCase();
-            if (currentType === 'posts') {
-                // Strip HTML tags for search
-                const stripHtml = str => str.replace(/<[^>]+>/g, '');
-                currentFiltered = dataArr.filter(post => {
-                    const contentText = Array.isArray(post.content)
-                        ? post.content.map(stripHtml).join(' ').toLowerCase()
-                        : stripHtml(post.content).toLowerCase();
-                    return post.title.toLowerCase().includes(filter) || contentText.includes(filter);
-                }).slice(0, 5);
-                postList.style.display = "block";
-                if (currentFiltered.length === 0) {
-                    postList.innerHTML = '<li style="text-align:center;color:#888;">No posts found.</li>';
-                    return;
-                }
-                currentFiltered.forEach((post, idx) => {
-                    postList.innerHTML += `<li class="post-item">
-                        <div class="post-title"><a class="post-link" href="#" data-idx="${idx}">${post.title}</a></div>
-                        <div class="post-date">${post.date}</div>
-                    </li>`;
-                });
-            } else {
-                // SDB Data: search all fields
-                currentFiltered = dataArr.filter(entry => {
-                    return Object.values(entry).some(val => (val || "").toLowerCase().includes(filter));
-                }).slice(0, 5);
-                postList.style.display = "block";
-                if (currentFiltered.length === 0) {
-                    postList.innerHTML = '<li style="text-align:center;color:#888;">No SDB data found.</li>';
-                    return;
-                }
-                currentFiltered.forEach((entry, idx) => {
-                    postList.innerHTML += `<li class="post-item">
-                        <div class="post-title"><a class="post-link" href="#" data-idx="${idx}">${entry["Site Name Master DPR"] || entry["New IP ID"]}</a></div>
-                        <div class="post-date">${entry["ON Aired Date"] || ""}</div>
-                    </li>`;
-                });
+        function tryRenderResults() {
+            if (postsLoaded && sdbLoaded) {
+                renderResults();
             }
         }
+        
+        // --- DOM ELEMENT REFERENCES ---
+        const searchBar = document.getElementById('searchBar');
+        const dataTypeSelect = document.getElementById('dataType');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const noResultsMessage = document.getElementById('noResults');
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
 
-        function showDetails(idx) {
-            const postList = document.getElementById("postList");
-            let item = currentFiltered[idx];
-            postList.style.display = "block";
-            if (currentType === 'posts') {
-                const author = item.author || "rpkc8800";
-                const date = item.date ? new Date(item.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : "";
-                let contentHtml = "";
-                if (Array.isArray(item.content)) {
-                    contentHtml = item.content.map(line => {
-                        const latLongMatch = line.match(/Lat,Long\s*-\s*([0-9.]+),([0-9.]+)\s*map/i);
-                        if (latLongMatch) {
-                            const lat = latLongMatch[1];
-                            const long = latLongMatch[2];
-                            return line.replace(/map/i, `<a href='https://maps.google.com/maps?q=${lat},${long}' target='_blank' style='color:#0073aa;text-decoration:underline;'>map</a>`);
-                        }
-                        return line;
-                    }).join('');
-                } else {
-                    contentHtml = `<div>${item.content}</div>`;
-                }
-                postList.innerHTML = `<li class="post-item" style="background:#fff;max-width:700px;margin:0 auto;">
-                    <div class="post-title" style="font-size:2em;font-weight:600;color:#223;">${item.title}</div>
-                    <div style="color:#3b5998;font-size:1em;margin-bottom:16px;">By ${author} / ${date}</div>
-                    <div class="post-content" style="font-size:1.1em;color:#222;">${contentHtml}</div>
-                    <button onclick="renderData(document.getElementById('searchBar').value)" style="margin-top:24px;padding:8px 24px;border-radius:6px;border:none;background:#0073aa;color:#fff;cursor:pointer;">Back to list</button>
-                </li>`;
-            } else {
-                // SDB details: show all fields
-                let detailsHtml = '<div style="font-size:1.1em;color:#222;">';
-                Object.entries(item).forEach(([key, val]) => {
-                    detailsHtml += `<div><strong>${key}:</strong> ${val}</div>`;
-                });
-                detailsHtml += '</div>';
-                postList.innerHTML = `<li class="post-item" style="background:#fff;max-width:700px;margin:0 auto;">
-                    <div class="post-title" style="font-size:2em;font-weight:600;color:#223;">${item["Site Name Master DPR"] || item["New IP ID"]}</div>
-                    <div style="color:#3b5998;font-size:1em;margin-bottom:16px;">${item["ON Aired Date"] || ""}</div>
-                    ${detailsHtml}
-                    <button onclick="renderData(document.getElementById('searchBar').value)" style="margin-top:24px;padding:8px 24px;border-radius:6px;border:none;background:#0073aa;color:#fff;cursor:pointer;">Back to list</button>
-                </li>`;
+        // --- EVENT LISTENERS ---
+        searchBar.addEventListener('input', () => renderResults());
+        dataTypeSelect.addEventListener('change', () => renderResults());
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // --- CORE FUNCTIONS ---
+        function renderResults() {
+            const searchTerm = searchBar.value.toLowerCase().trim();
+            const dataType = dataTypeSelect.value;
+            
+            resultsContainer.innerHTML = ''; // Clear previous results
+            
+            if (!searchTerm) {
+                noResultsMessage.classList.add('hidden');
+                return; // Don't show anything if search is empty
             }
+
+            const dataToSearch = dataType === 'posts' ? postsData : sdbData;
+            const filteredData = dataToSearch.filter(item => {
+                // Iterate over all values of an object and check if any of them include the search term.
+                return Object.values(item).some(value =>
+                    String(value).toLowerCase().includes(searchTerm)
+                );
+            });
+
+            if (filteredData.length === 0) {
+                 noResultsMessage.classList.remove('hidden');
+            } else {
+                 noResultsMessage.classList.add('hidden');
+                 filteredData.slice(0, 10).forEach(item => { // Limit to a maximum of 10 results
+                    const resultCard = createResultCard(item, dataType);
+                    resultsContainer.appendChild(resultCard);
+                });
+            }
+
+            // Add event listeners for the new "View Details" buttons
+            document.querySelectorAll('.toggle-details-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const btn = e.currentTarget;
+                    const details = btn.closest('.result-card').querySelector('.details-grid');
+                    const isHidden = details.classList.toggle('hidden');
+                    
+                    if (isHidden) {
+                        btn.innerHTML = '<i class="fas fa-chevron-down mr-2"></i>View Details';
+                    } else {
+                        btn.innerHTML = '<i class="fas fa-chevron-up mr-2"></i>Hide Details';
+                    }
+                });
+            });
+
+            // Add event listeners for the new copy buttons
+            document.querySelectorAll('.copy-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const textToCopy = e.target.closest('.copy-btn').dataset.copy;
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                        e.target.innerHTML = '<i class="fas fa-check"></i>';
+                        setTimeout(() => { e.target.innerHTML = '<i class="far fa-copy"></i>'; }, 2000);
+                    });
+                });
+            });
         }
 
-        document.getElementById("searchBar").addEventListener("input", function(e) {
-            renderData(e.target.value);
-        });
+        function createResultCard(item, dataType) {
+            const card = document.createElement('div');
+            card.className = 'result-card bg-white p-6 rounded-lg shadow-md border border-gray-200 hover:shadow-xl hover:border-blue-400 transition-all';
 
-        document.getElementById("dataType").addEventListener("change", function(e) {
-            currentType = e.target.value;
-            renderData(document.getElementById('searchBar').value);
-        });
-
-        document.getElementById("postList").addEventListener("click", function(e) {
-            if (e.target.classList.contains("post-link")) {
-                e.preventDefault();
-                const idx = e.target.getAttribute("data-idx");
-                showDetails(idx);
+            if (dataType === 'posts') {
+                card.innerHTML = `
+                    <h3 class="text-xl font-bold text-blue-700 mb-2">${item.title || 'No Title'}</h3>
+                    <p class="text-gray-600 mb-3">${item.content || 'No Content'}</p>
+                    <div class="text-sm text-gray-500">
+                        <i class="fas fa-calendar-alt mr-2"></i>
+                        <span>${item.date ? new Date(item.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'No Date'}</span>
+                    </div>
+                `;
+            } else { // sdb
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div class="flex-grow pr-4">
+                            <h3 class="text-xl font-bold text-teal-700 mb-1">${item["Site Name Master DPR"] || 'No Site Name'}</h3>
+                            <p class="text-sm text-gray-500">Existing ID: ${item["Exist Site ID"] || 'N/A'}</p>
+                        </div>
+                        <span class="bg-teal-100 text-teal-800 text-xs font-semibold px-2.5 py-0.5 rounded-full self-start">${item.Category || ''}</span>
+                    </div>
+                    <div class="mt-4 pt-4 border-t">
+                        <div class="flex items-center text-gray-700">
+                            <strong class="mr-2">New IP ID:</strong> ${item["New IP ID"] || 'N/A'}
+                            <button class="copy-btn ml-2 text-gray-500 hover:text-blue-600" data-copy="${item["New IP ID"] || ''}">
+                                <i class="far fa-copy"></i>
+                            </button>
+                        </div>
+                        <button class="toggle-details-btn mt-4 text-sm text-blue-600 hover:text-blue-800 font-semibold py-2 px-3 rounded-lg bg-blue-50 hover:bg-blue-100 transition-all">
+                            <i class="fas fa-chevron-down mr-2"></i>View Details
+                        </button>
+                    </div>
+                    <div class="details-grid hidden mt-4 pt-4 border-t grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-3 text-sm">
+                        <div class="font-semibold text-gray-800 col-span-full text-base border-b pb-2 mb-2">Site Details</div>
+                        <div><strong>District:</strong> ${item.District || 'N/A'}</div>
+                        <div><strong>BA:</strong> ${item.BA || 'N/A'}</div>
+                        <div><strong>SDCA:</strong> ${item.SDCA || 'N/A'}</div>
+                        <div><strong>On Air Date:</strong> ${item["ON Aired Date"] || 'N/A'}</div>
+                        <div><strong>Media:</strong> ${item["Media Type"] || 'N/A'}</div>
+                        <div><strong>Router:</strong> ${item.Router || 'N/A'}</div>
+                        <div class="font-semibold text-gray-800 col-span-full text-base border-b pb-2 mb-2 mt-3">4G/eNB IDs</div>
+                        <div><strong>4G ID (B1):</strong> ${item["4G Site ID_Band1"] || 'N/A'}</div>
+                        <div><strong>4G ID (B28):</strong> ${item["4G Site ID__Band28"] || 'N/A'}</div>
+                        <div><strong>4G ID (B41):</strong> ${item["4G Site ID_Band41"] || 'N/A'}</div>
+                        <div><strong>eNB (B1):</strong> ${item.Enb_B1 || 'N/A'}</div>
+                        <div><strong>eNB (B28):</strong> ${item.Enb_B28 || 'N/A'}</div>
+                        <div><strong>eNB (B41):</strong> ${item.Enb_B41 || 'N/A'}</div>
+                        <div class="font-semibold text-gray-800 col-span-full text-base border-b pb-2 mb-2 mt-3">OAM Details</div>
+                        <div><strong>OAM CEF Pool:</strong> ${item["OAM CEF IP pool"] || 'N/A'}</div>
+                        <div><strong>OAM CEF GW:</strong> ${item["OAM CEF HW GW"] || 'N/A'}</div>
+                        <div><strong>OAM CEF IP:</strong> ${item["OAM CEF HW IP"] || 'N/A'}</div>
+                        <div><strong>OAM RAC Pool:</strong> ${item["OAM RAC IP Pool"] || 'N/A'}</div>
+                        <div><strong>OAM RAC GW:</strong> ${item["OAM RAC GW"] || 'N/A'}</div>
+                        <div><strong>OAM RAC VLAN:</strong> ${item["OAM RAC VLAN"] || 'N/A'}</div>
+                        <div class="font-semibold text-gray-800 col-span-full text-base border-b pb-2 mb-2 mt-3">S1C/S1U Details</div>
+                        <div><strong>S1C Pool:</strong> ${item["S1C RAC IP Pool"] || 'N/A'}</div>
+                        <div><strong>S1C GW:</strong> ${item["S1C GW"] || 'N/A'}</div>
+                        <div><strong>S1C VLAN:</strong> ${item["S1C VLAN"] || 'N/A'}</div>
+                        <div><strong>S1U Pool:</strong> ${item["S1U RAC IP Pool"] || 'N/A'}</div>
+                        <div><strong>S1U GW:</strong> ${item["S1U GW"] || 'N/A'}</div>
+                        <div><strong>S1U VLAN:</strong> ${item["S1U VLAN"] || 'N/A'}</div>
+                        <div class="font-semibold text-gray-800 col-span-full text-base border-b pb-2 mb-2 mt-3">Other Info</div>
+                        <div><strong>MME:</strong> ${item.MME || 'N/A'}</div>
+                        <div><strong>MME IP:</strong> ${item["MME IP"] || 'N/A'}</div>
+                        <div><strong>TAC ID:</strong> ${item["TAC ID"] || 'N/A'}</div>
+                        <div><strong>Latitude:</strong> ${item.Latitude || 'N/A'}</div>
+                        <div><strong>Longitude:</strong> ${item.Longitude || 'N/A'}</div>
+                    </div>
+                `;
             }
-        });
+            return card;
+        }
 
-        renderData();
     </script>
+
 </body>
 </html>
